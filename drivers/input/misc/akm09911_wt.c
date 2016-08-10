@@ -34,7 +34,7 @@
 #include <linux/of_gpio.h>
 #include <linux/sensors.h>
 #define AKM_DEBUG_IF			0
-#define AKM_HAS_RESET			1
+#define AKM_HAS_RESET			0
 #define AKM_INPUT_DEVICE_NAME	"compass"
 #define AKM_DRDY_TIMEOUT_MS		100
 #define AKM_BASE_NUM			10
@@ -1505,11 +1505,14 @@ static int akm_compass_parse_dt(struct device *dev,
 	akm->use_hrtimer = of_property_read_bool(np, "akm,use-hrtimer");
 	akm->gpio_rstn = of_get_named_gpio_flags(dev->of_node,
 			"akm,gpio_rstn", 0, NULL);
+
+#if AKM_HAS_RESET
 	if (!gpio_is_valid(akm->gpio_rstn)) {
 		dev_err(dev, "gpio reset pin %d is invalid.\n",
 			akm->gpio_rstn);
 		return -EINVAL;
 	}
+#endif
 	return 0;
 }
 #else
